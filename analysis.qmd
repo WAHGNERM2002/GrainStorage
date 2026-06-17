@@ -1,6 +1,6 @@
 ---
-title: ""
-author: ""
+title: "Revisión bibliométrica: Técnicas de conservación para granos"
+author: "Wagner Meza-Maicelo1, Victor-Hugo Baldera-Chapoñan, Manuel Oliva-Cruz and Flavio Lozano-Isla"
 format:
   html:
     toc: true
@@ -26,16 +26,255 @@ execute:
 
 source('https://inkaverse.com/setup.r')
 ```
+```{r}
+library(bibliometrix)
+library(ggplot2)
+library(dplyr)
+library(writexl)
+library(readxl)
+```
 
-# Data import
+# INTERFAZ GRÁFICA DE BIBLIOSHINY
 
 ```{r}
-gs <- "url" %>% 
-  as_sheets_id()
-
-fb <- gs %>% 
-  range_read(ss = .,sheet = "fb")
+install.packages("bibliometrix")
+library(bibliometrix)
+bibliometrix::biblioshiny()
 ```
+
+# UNIÓN Y CURACIÓN DE DATOS
+
+```{r}
+data1 <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/scopus_export_May 20-2026_8f723f5e-8390-415d-ab71-4a2c8e85a3a1.csv", dbsource = "scopus", format = "csv")
+data2 <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/scopus_export_May 20-2026_b07e3185-d711-4fab-a8df-8d081415d02d.csv", dbsource = "scopus", format = "csv")
+
+data_unificado <- rbind(data1, data2)
+
+sum(duplicated(data_unificado$TI))
+data_unificado <- data_unificado[!duplicated(data_unificado$TI), ]
+
+sum(duplicated(data_unificado$DI))
+data_unificado <- data_unificado[!duplicated(data_unificado$DI), ]
+
+write.csv(data_unificado, "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv")
+```
+
+#ANÁLISIS DE LA PRODUCCION CIENTIFICA MUNDIAL
+
+```{r}
+data <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv",
+                   dbsource = "scopus", format = "csv")
+
+data$TC <- as.numeric(data$TC)
+
+produccion_citas_anio <- data %>%
+  group_by(PY) %>%
+  summarise(
+    Articulos = n(),
+    Citas = sum(TC, na.rm = TRUE)
+  ) %>%
+  arrange(PY)
+
+print(produccion_citas_anio)
+
+write_xlsx(produccion_citas_anio,
+           "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
+```
+
+```{r}
+# Data
+data <- read_excel("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
+head(data)
+```
+```{r}
+data$Año <- as.numeric(data$Año)
+data$Articulos <- as.numeric(data$Articulos)
+data$Citas <- as.numeric(data$Citas)
+
+factor_citas <- 160 / 1600
+
+
+P1 <- ggplot(data, aes(x = Año)) +
+
+  geom_col(aes(y = Articulos, fill = "Publications"), alpha = 0.7, width = 0.7) +
+  
+  geom_line(aes(y = Citas * factor_citas, color = "Citations"), size = 0.8, lineend = "round") +
+  geom_point(aes(y = Citas * factor_citas, color = "Citations"), size = 2) +
+  
+  scale_y_continuous(
+    name = "Publications",
+    limits = c(0, 160),
+    breaks = seq(0, 160, 20),
+    expand = c(0, 0),
+    sec.axis = sec_axis(~./factor_citas, name = "Citations", breaks = seq(0, 1600, 200))
+  ) +
+  scale_x_continuous(
+    breaks = seq(min(data$Año), max(data$Año), by = 1),
+    expand = c(0, 0)
+  ) +
+  
+  scale_fill_manual(name = "", values = c("Publications" = "#5DADE2"), guide = guide_legend(order = 1)) +
+  scale_color_manual(name = "", values = c("Citations" = "#990000"), guide = guide_legend(order = 2)) +
+  
+  labs(
+    title = "",
+    x = "Year"
+  ) +
+
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8, color = "black"),
+    axis.text.y = element_text(size = 9, color = "black"),
+    axis.title.y.left = element_text(color = "black"),
+    axis.title.y.right = element_text(color = "black"),
+    panel.grid.major.y = element_line(color = "gray80", size = 0.5),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, size = 1),
+    panel.background = element_blank()
+  )
+
+print(P1)
+```
+
+```{r}
+ggsave("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figuras/produccion_citas_por_año.jpg", 
+       plot = P1, 
+       width = 14,    
+       height = 6,
+       dpi = 300,
+       bg = "white")
+```
+
+# CALCULO DE MODELOS LINEAL CUADRATICO
+
+```{r}
+mi_data <- read_excel("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
+
+model_pub <- lm(Publications ~ poly(Year, 2, raw=TRUE), data=mi_data)
+summary(model_pub)
+
+model_cit <- lm(Citations ~ poly(Year, 2, raw=TRUE), data=mi_data)
+summary(model_cit)  
+```
+
+# ANÁLISIS DE CORRELACIÓN
+
+```{r}
+# Libreria
+library(psych)
+
+```
+```{r}
+mi_data <- read_excel("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
+
+# 2. Crear dataframe solo con Artículos y Citas
+cor_matrix <- mi_data[, c("Publications", "Citations")]
+cor_matrix <- as.data.frame(cor_matrix)
+
+# 3. Guardar la figura en JPG
+jpeg(
+  filename = "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figuras/Articulos_Citas_Correlation.jpg",
+  width    = 30,
+  height   = 30,
+  units    = "cm",
+  res      = 300
+)
+
+# 4. Ajustes gráficos
+op <- par(
+  mar      = c(4, 4, 2, 2),
+  oma      = c(1, 1, 1, 1),
+  mgp      = c(2, 0.5, 0), 
+  tcl      = -0.2,          
+  cex.axis = 0.8          
+)
+
+# 5. Graficar matriz de correlación
+pairs.panels(
+  cor_matrix,
+  method   = "pearson",   # correlación de Pearson
+  hist.col = "red",
+  pch      = 21,
+  stars    = TRUE,
+  scale    = FALSE,
+  lm       = TRUE          # añade línea de regresión
+)
+
+# 6. Restaurar parámetros gráficos y cerrar dispositivo
+par(op)
+dev.off()
+```
+# MOSAICO DE FIGURAS
+
+```{r}
+# Librerías necesarias
+library(jpeg)
+library(grid)
+library(cowplot)
+
+# 1. Cargar las imágenes desde tu ruta
+fig_A <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_A.jpg")
+fig_B <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_B.png")
+fig_C <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_C.jpg")
+
+# 2. Convertir a objetos gráficos
+gA <- rasterGrob(fig_A, interpolate = TRUE)
+gB <- rasterGrob(fig_B, interpolate = TRUE)
+gC <- rasterGrob(fig_C, interpolate = TRUE)
+
+# 3. Unir B y C horizontalmente (fila inferior)
+bottom_row <- plot_grid(gB, gC, labels = c("B", "C"), ncol = 2, align = "h")
+
+# 4. Poner A encima de la fila B+C
+final_plot <- plot_grid(gA, bottom_row, labels = c("A", ""), ncol = 1, rel_heights = c(2,1))
+
+# 5. Guardar el panel final
+ggsave("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_panel_ABC.jpg",
+       plot = final_plot,
+       width = 30,
+       height = 25,
+       units = "cm",
+       dpi = 300)
+```
+
+# ANALISIS BIBLIOMETRICO
+```{r}
+#========
+# DATA
+#========
+M <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv", dbsource = "scopus", format = "csv")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # References
 

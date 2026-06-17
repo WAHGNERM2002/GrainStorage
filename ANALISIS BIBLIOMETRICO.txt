@@ -1,0 +1,287 @@
+ANALISIS BIBLIOMETRICO
+
+BUSQUEDA Y ANALISIS PRELIMINAR PARA ENTREGABLE-17/05/2026
+
+formula de búsqueda: 
+TITLE-ABS-KEY(
+(
+    "postharvest grain storage"
+    OR "stored grain"
+    OR "grain preservation"
+)
+AND
+(
+    hermetic
+    OR fumigation
+    OR drying
+    OR aeration
+    OR refrigeration
+    OR biocontrol
+    OR "modified atmosphere"
+)
+)
+
+
+La red internacional de coautoría
+
+COAUTORI-COUNTRIES
+
+*Pasos de mi figura*
+Coauthorsjip - countries
+Full counting
+ignore..._activado_numero maximo 30
+Minimum number of documents of a country: 5
+Minimum number of citations of a country: 0
+
+Resultado: 39
+
+Configuracion dentro del mapa
+atracccion: 2
+repulsion: -1
+scale: 0.84
+size varation: 0.38
+resolucion: 0.5 (a mayor resolucion mas clusters)
+min. cluster size: 4 (numero de enlaces, menor a 4 enlaces desaparece del mapa)
+
+
+*ANALISIS DE COAUTORIA-AUTORES*
+Data
+
+"C:\Users\USUARIO\Desktop\GIT\GrainStorage\files\data\scopus_export_May 20-2026_8f723f5e-8390-415d-ab71-4a2c8e85a3a1.csv" "C:\Users\USUARIO\Desktop\GIT\GrainStorage\files\data\scopus_export_May 20-2026_b07e3185-d711-4fab-a8df-8d081415d02d.csv"
+
+Configuración
+Full counting
+ignore..._desactivado
+Minimum number of documents of a country: 5
+Minimum number of citations of a country: 0
+
+Resultado: 48
+Configuracion dentro del mapa
+atracccion: 2
+repulsion: -1
+scale: 0.79
+size varation: 0.58
+resolucion: 1.00 o 0.5 igual generan 3 clusteres (a mayor resolucion mas clusters)
+min. cluster size: 1 (numero de enlaces, menor a 4 enlaces desaparece del mapa)
+
+
+
+*ANALISIS DE COCITACION*
+Configuración
+cocitacion-cited authors
+full counting
+minimo number of citations of an uthor: 20
+Se elimino Arthur F H por que esta dplicado 
+
+Configuracion dentro del mapa
+atracccion: 1
+repulsion: -1
+scale: 0.74
+size varation: 0.37
+resolucion: 1.00
+min. cluster size: 20
+max lines: 300
+
+
+
+*ANALISIS DE PALABRAS CLAVE*
+
+COOCURRENCIA DE PALABRAS CLAVE
+
+coocurence-keywords author
+full counting
+Total de palabras clave del autor: 2444
+minimun number of coocurrence of a keywords: 15
+resultados: 41
+después de filtrar: no sefiltraron
+
+Configuracion dentro del mapa
+atracccion: 1
+repulsion: -2
+scale: 0.65
+size varation: 0.77
+resolucion: 1.00
+min. cluster size: 5
+max lines: 200
+
+MAPA TEMATICO
+
+
+
+ANALISIS DE AUTORES Y SUS PUBLICACIONES
+
+Un primer grupo incluye a Athanassiou, Christos G.,  Vassilakos, Thomas N.,   Lampiri, Evagelia y  Morrison, William R:
+
+Titulos  de las publicaciones donde al menos dos de ellos aparecen:
+
+1. Diversity and Seasonal Dynamics of Stored-Product Insects in a Feed Manufacturing Facility in Greece
+
+2. Suitability of Three Trunk Traps for Capturing Larvae of Lymantria dispar (L.) (Lepidoptera, Erebidae)
+
+3. Spatio-Temporal Distribution of Stored Product Insects in a Feed Mill in Greece
+
+4. Effect of Trap Type and Height on the Captures of the Pink Bollworm, Pectinophora gossypiella (Saunders) (Lepidoptera: Gelechiidae), in Pheromone-Baited Traps in Cotton
+
+5. Insecticidal Effect of Diatomaceous Earth Formulations for the Control of a Wide Range of Stored-Product Beetle Species
+
+6. Preference of Major Stored Product Insects in Fortified Rice with Basil
+
+7. Effect of Nitrogen on Stored-Product Insect Control at Industrial Scale
+
+
+
+Un segundo grupo que incluye a  Kavallieratos, Nickolas G.,  Wakil, Waqas,  Rasool, Khawaja G., Aldawood, Abdulrahman S., Husain, Mureed, y  Eleftheriadou, Nikoleta:
+
+
+
+1. Laboratory evaluation of the entomopathogenic fungus Beauveria bassiana, bacterium Bacillus thuringiensis, and insecticide emamectin benzoate treatments, alone and in dual combinations against Spodoptera frugiperda
+
+2. Bottom-up effects of host plant colonization with endophytic entomopathogenic fungus strengthen the predator-driven top-down control of a pest
+
+3. Efficacy of the anthranilic diamide tetraniliprole against four coleopteran pests of stored grains
+
+4. Advances in Stored-Product Pest Management: Combined Effects of Diatomaceous Earths with Botanicals, Insecticides, Entomopathogenic/Plant Pathogenic Fungi, and Silica Gel
+
+5. The Inevitable Fate of Tetranychus urticae on Tomato Plants Treated with Entomopathogenic Fungi and Spinosad
+
+6. Dual-strategy approach for Rhynchophorus ferrugineus control: Endophytic Beauveria bassiana and Bacillus thuringiensis topical application
+
+7. Current Status of Biology–Biotechnic, Agronomic, and Biological Control of Rhynchophorus ferrugineus: A Review
+
+8. The sublethal impacts of five insecticidal formulations on Oryzaephilus surinamensis behavioral traits
+
+9. Exploring Opportunities and Challenges: SWOT Analysis for Advancing Smart Tech Solutions in Managing Lymantria dispar dispar Infestations in Forests of the European Union
+
+10. Acaricidal Efficacy of Abamectin against Tetranychus urticae Populations When Combined with Entomopathogenic Fungi
+
+11. Initial Evaluation of the Entomopathogenic Fungi Beauveria bassiana and Metarhizium robertsii, and the Entomopathogenic Nematode Heterorhabditis bacteriophora, Individually and in Combination against the Noxious Helicoverpa armigera (Lepidoptera: Noctuidae)
+
+12. Sublethal Effects of Chlorantraniliprole on the Mobility Patterns of Sitophilus spp.: Implications for Pest Management
+
+13. Assessing the Prey Specificity of Neoleucopis spp. against Marchalina hellenica
+
+14. Impact of Three Entomopathogenic Fungal Isolates on the Growth of Tomato Plants—Ectoapplication to Explore Their Effect on Tetranychus urticae
+
+15. Efficacy and Persistence of Entomopathogenic Fungi against Rhynchophorus ferrugineus on Date Palm: Host to Host Transmission
+
+16. Exploring the Efficacy of Four Apiaceae Essential Oils against Nine Stored-Product Pests in Wheat Protection
+
+17. A winning formula: sustainable control of three stored-product insects through paired combinations of entomopathogenic fungus, diatomaceous earth, and lambda-cyhalothrin
+
+18. Unleashing the power of diatomaceous earths for sustainable management of Tribolium castaneum infestation in wheat
+
+19. Evaluating the Compatibility of Spinosad and Alpha-Cypermethrin for Controlling Six Insect Pests Infesting Stored Wheat
+
+20. Natural Warriors against Stored-Grain Pests: The Joint Action of Beauveria bassiana and Steinernema carpocapsae
+
+21. Treatment of Four Stored-Grain Pests with Thiamethoxam plus Chlorantraniliprole: Enhanced Impact on Different Types of Grain Commodities and Surfaces
+
+22. The Potential of Two Entomopathogenic Fungi and Enhanced Diatomaceous Earth Mixed with Abamectin: A Comprehensive Study on Mortality, Progeny Production, Application Method, and Surface Application against Tribolium castaneum
+
+23. Entomopathogenic Fungus and Enhanced Diatomaceous Earth: The Sustainable Lethal Combination against Tribolium castaneum
+
+24. Laboratory and field studies on the combined application of Beauveria bassiana and fipronil against four major stored-product coleopteran insect pests
+
+25. Phenology and Potential Fecundity of Neoleucopis kartliana in Greece
+
+26. Immediate and Delayed Mortality of Four Stored-Product Pests on Concrete Surfaces Treated with Chlorantraniliprole
+
+
+
+Un tercer grupo incluye a Arthur, Frank H., Phillips, Thomas W.,  Maier, Dirk E., y Nayak, Manoj K.:
+
+1. A rapid assay for the detection of resistance to phosphine in the lesser grain borer, Rhyzopertha dominica (F.) (Coleoptera: Bostrichidae)
+
+2. High-dose strategies for managing phosphine-resistant populations of Rhyzopertha dominica (F.) (Coleoptera: Bostrichidae)
+
+3. Evaluation of Knockdown Bioassay Methods to Assess Phosphine Resistance in the Red Flour Beetle, Tribolium castaneum (Herbst) (Coleoptera: Tenebrionidae)
+
+4. Insect Pest Management in Stored Grain
+
+5. Phosphine Resistance in North American Field Populations of the Lesser Grain Borer, Rhyzopertha dominica (Coleoptera: Bostrichidae) 
+
+6. Geographic Variation in Phosphine Resistance Among North American Populations of the Red Flour Beetle (Coleoptera: Tenebrionidae)
+
+
+
+PAISES Y AFILIACIONES DE TODOS LOS AUTORES QUE ESTAN EN LA RED DE COLABORACION
+
+
+1. Athanassiou, Christos G.
+Profesor de la Universidad de Tesalia, Grecia.
+2. Vassilakos, Thomas N.
+PhD
+University of Thessaly.
+3. Lampiri, Evagelia
+University of Thessaly: Volos, Thessaly, GR.
+Employment.
+Organization identifiers:
+ROR: https://ror.org/04v4g9h31
+University of Thessaly: Volos, Thessaly, GR.
+4. Morrison, William R.
+USDA Agricultural Research Service: Manhattan, KS, US.
+2016-12-12 to present | Research Entomologist (Center for Grain and Animal Health Research).
+Employment.
+5. Kavallieratos, Nickolas G.
+Profesor de la Universidad Agrícola de Atenas, Grecia.
+6. Wakil, Waqas
+Ph.D.
+Professor (Assistant) at University of Agriculture.
+7. Rasool, Khawaja G.
+Institution: King Saud University.
+Past institutions:
+The King's College.
+King Saud University.
+Institute of Entomology.
+Manufacturing Technologies Association.
+Kobe University.
+8. Aldawood, Abdulrahman S.
+King Saud University: Riyadh, SA.
+Employment.
+9. Husain, Mureed
+Dr. Mureed Husain.
+King Saud University.
+Verified email at ksu.edu.sa.
+Molecular biology/Entomology.
+10. Eleftheriadou, Nikoleta
+PhD.
+External Collaborator at Forest Research Institute (HAO Demeter).
+Cited by 235.
+Entomology.
+11. Arthur, Frank H.
+Aeropuerto Internacional Kotoka: Accra, Región del Gran Accra, GH.
+Meteorólogo (Departamento de Meteorología de Aviación).
+Empleo.
+12. Phillips, Thomas W.
+Institution: Kansas State University.
+Past institutions:
+Oklahoma State University.
+Kansas State University.
+13. Maier, Dirk E.
+Iowa State University: Ames, IA, US.
+2015-08 to present | Professor (Agricultural & Biosystems Engineering).
+Employment.
+14. Nayak, Manoj K.
+Department of Agriculture and Fisheries: Brisbane, Queensland, AU.
+2010-10-10 to present | Principal Research Scientist, Team Leader (Department of Agriculture and Fisheries).
+
+
+
+TEMAS EN TENDENCIA
+Campo: Palabras clave del autor
+Número de mandatos: Establece cuántos términos principales mostrar en el gráfico de tendencias
+Frecuencia mínima de palabras: 5
+Número de palabras al año: 1
+Se excluyeron algunos términos repetidos, que se colocaron en .txt
+
+
+
+
+MAPA DE EVOLUCION TEMATICA
+Number of Cutting Points: 3
+Palabras clave del autor
+Se excluyeron algunos términos repetidos, que se colocaron en .txt
+
+
+
+
