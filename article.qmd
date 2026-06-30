@@ -18,7 +18,7 @@ execute:
   warning: false
 crossref:
   fig-title: Figure
-  fig-prefix: Figure
+  fig-prefix: Fig.
   tbl-title: Table
   tbl-prefix: Table
 ---
