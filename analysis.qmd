@@ -1,6 +1,6 @@
 ---
-title: "Revisión bibliométrica: Técnicas de conservación para granos"
-author: "Wagner Meza-Maicelo1, Victor-Hugo Baldera-Chapoñan, Manuel Oliva-Cruz and Flavio Lozano-Isla"
+title: "Bibliometric analysis"
+author: "Wagner Meza-Maicelo1, Victor-Hugo Baldera-Chapoñan, Dmaris Leiva Tafur, Manuel Oliva-Cruz and Flavio Lozano-Isla"
 format:
   html:
     toc: true
@@ -34,35 +34,187 @@ library(writexl)
 library(readxl)
 ```
 
-# INTERFAZ GRÁFICA DE BIBLIOSHINY
+# BIBLIOSHINY
 
 ```{r}
 install.packages("bibliometrix")
 library(bibliometrix)
+library(ggplot2)
+library(openxlsx)
 bibliometrix::biblioshiny()
 ```
 
-# UNIÓN Y CURACIÓN DE DATOS
+# UNIÓN Y CURACIÓN DE DATOS (MCA)
 
 ```{r}
-data1 <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/scopus_export_May 20-2026_8f723f5e-8390-415d-ab71-4a2c8e85a3a1.csv", dbsource = "scopus", format = "csv")
-data2 <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/scopus_export_May 20-2026_b07e3185-d711-4fab-a8df-8d081415d02d.csv", dbsource = "scopus", format = "csv")
-
-data_unificado <- rbind(data1, data2)
-
-sum(duplicated(data_unificado$TI))
-data_unificado <- data_unificado[!duplicated(data_unificado$TI), ]
-
-sum(duplicated(data_unificado$DI))
-data_unificado <- data_unificado[!duplicated(data_unificado$DI), ]
-
-write.csv(data_unificado, "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv")
+# data
+M <- read.csv(
+  "C:/Users/USUARIO/Desktop/GIT/GrainStorage/manuscript/metadata.csv",
+  fileEncoding = "UTF-8-BOM",
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
 ```
+```{r}
+# DICCIONARIO DE NORMALIZACIÓN
+dic <- c(
+  "infusorial earth" = "diatomaceous earth",
+  "diatomaceous earths" = "diatomaceous earth",
+  "phosphines" = "phosphine",
+  "monoterpene" = "monoterpenes",
+  "insecticide" = "insecticides",
+  "pesticide" = "pesticides",
+  "essential oil" = "essential oils",
+  "plant extract" = "plant extracts",
+  "biopesticide" = "biopesticides",
+  "moth" = "moths",
+  "diatomite" = "diatomaceous earth",
+    "fungus" = "fungi",
+  "insect repellent" = "insect repellents",
+  "biological control agent" = "biological control agents"
+)
+
+```
+```{r}
+# 3. FUNCIÓN DE NORMALIZACIÓN
+normalizar <- function(x) {
+
+  if (is.na(x) || !nzchar(trimws(x))) {
+    return(NA_character_)
+  }
+
+  terminos <- trimws(tolower(
+    unlist(strsplit(x, ";", fixed = TRUE))
+  ))
+
+  terminos <- gsub("\\s+", " ", terminos)
+  terminos <- terminos[nzchar(terminos)]
+
+  # Sustituir términos equivalentes
+  idx <- terminos %in% names(dic)
+  terminos[idx] <- unname(dic[terminos[idx]])
+
+  # Eliminar duplicados dentro del documento
+  terminos <- unique(terminos)
+
+  paste(terminos, collapse = ";")
+}
+
+```
+```{r}
+
+# BASE NORMALIZADA
+M_mca <- M
+
+M_mca$ID <- vapply(
+  M$ID,
+  normalizar,
+  character(1)
+)
+```
+```{r}
+# MCA
+set.seed(123)
+
+CS <- conceptualStructure(
+  M_mca,
+  field = "ID",
+  method = "MCA",
+  minDegree = 5,
+  clust = "auto",
+  k.max = 8,
+  stemming = FALSE
+)
+
+# 6. MOSTRAR GRÁFICO
+print(CS$graph_terms)
+
+# 7. VERIFICAR CLÚSTERES
+table(CS$km.res$cluster)
+```
+```{r}
+
+# RESULTADOS
+salida <- "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Data/MCA_Resultados"
+
+dir.create(salida, recursive = TRUE, showWarnings = FALSE)
+
+# FIGURA
+ggsave(
+  file.path(salida, "Figure_7.png"),
+  plot = CS$graph_terms,
+  width = 14,
+  height = 9,
+  dpi = 600,
+  bg = "white"
+)
+
+ggsave(
+  file.path(salida, "MCA_ID_Normalizado.pdf"),
+  plot = CS$graph_terms,
+  width = 14,
+  height = 9
+)
+
+# PALABRAS CLAVE POR CLÚSTER
+tabla_clusters <- data.frame(
+  Palabra_clave = names(CS$km.res$cluster),
+  Cluster = as.integer(CS$km.res$cluster)
+)
+
+# RESUMEN DE CLÚSTERES
+resumen_clusters <- as.data.frame(
+  table(tabla_clusters$Cluster)
+)
+
+names(resumen_clusters) <- c(
+  "Cluster", "Numero_palabras"
+)
+
+# COORDENADAS FACTORIALES
+coordenadas <- data.frame(
+  Palabra_clave = rownames(CS$km.res$data.clust),
+  CS$km.res$data.clust,
+  row.names = NULL
+)
+
+# INERCIA EXPLICADA
+inercia <- data.frame(
+  Dimension = rownames(CS$res$eig),
+  CS$res$eig,
+  row.names = NULL
+)
+
+# EXPORTAR
+write.xlsx(
+  list(
+    Palabras_por_cluster = tabla_clusters,
+    Resumen_clusters = resumen_clusters,
+    Coordenadas_MCA = coordenadas,
+    Inercia_MCA = inercia
+  ),
+  file = file.path(salida, "Resultados_MCA_ID.xlsx"),
+  overwrite = TRUE
+)
+
+# ANÁLISIS
+saveRDS(
+  CS,
+  file.path(salida, "MCA_ID_Completo.rds")
+)
+
+# VERIFICAR RESULTADOS
+print(resumen_clusters)
+
+cat("\nArchivos guardados en:\n", salida, "\n")
+
+```
+
 
 #ANÁLISIS DE LA PRODUCCION CIENTIFICA MUNDIAL
 
 ```{r}
-data <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv",
+data <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadata.csv",
                    dbsource = "scopus", format = "csv")
 
 data$TC <- as.numeric(data$TC)
@@ -148,133 +300,6 @@ ggsave("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figuras/produccion_citas
        dpi = 300,
        bg = "white")
 ```
-
-# CALCULO DE MODELOS LINEAL CUADRATICO
-
-```{r}
-mi_data <- read_excel("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
-
-model_pub <- lm(Publications ~ poly(Year, 2, raw=TRUE), data=mi_data)
-summary(model_pub)
-
-model_cit <- lm(Citations ~ poly(Year, 2, raw=TRUE), data=mi_data)
-summary(model_cit)  
-```
-
-# ANÁLISIS DE CORRELACIÓN
-
-```{r}
-# Libreria
-library(psych)
-
-```
-```{r}
-mi_data <- read_excel("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/results_xlsx/produccion_citas_por_año.xlsx")
-
-# 2. Crear dataframe solo con Artículos y Citas
-cor_matrix <- mi_data[, c("Publications", "Citations")]
-cor_matrix <- as.data.frame(cor_matrix)
-
-# 3. Guardar la figura en JPG
-jpeg(
-  filename = "C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figuras/Articulos_Citas_Correlation.jpg",
-  width    = 30,
-  height   = 30,
-  units    = "cm",
-  res      = 300
-)
-
-# 4. Ajustes gráficos
-op <- par(
-  mar      = c(4, 4, 2, 2),
-  oma      = c(1, 1, 1, 1),
-  mgp      = c(2, 0.5, 0), 
-  tcl      = -0.2,          
-  cex.axis = 0.8          
-)
-
-# 5. Graficar matriz de correlación
-pairs.panels(
-  cor_matrix,
-  method   = "pearson",   # correlación de Pearson
-  hist.col = "red",
-  pch      = 21,
-  stars    = TRUE,
-  scale    = FALSE,
-  lm       = TRUE          # añade línea de regresión
-)
-
-# 6. Restaurar parámetros gráficos y cerrar dispositivo
-par(op)
-dev.off()
-```
-# MOSAICO DE FIGURAS
-
-```{r}
-# Librerías necesarias
-library(jpeg)
-library(grid)
-library(cowplot)
-
-# 1. Cargar las imágenes desde tu ruta
-fig_A <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_A.jpg")
-fig_B <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_B.png")
-fig_C <- readJPEG("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_C.jpg")
-
-# 2. Convertir a objetos gráficos
-gA <- rasterGrob(fig_A, interpolate = TRUE)
-gB <- rasterGrob(fig_B, interpolate = TRUE)
-gC <- rasterGrob(fig_C, interpolate = TRUE)
-
-# 3. Unir B y C horizontalmente (fila inferior)
-bottom_row <- plot_grid(gB, gC, labels = c("B", "C"), ncol = 2, align = "h")
-
-# 4. Poner A encima de la fila B+C
-final_plot <- plot_grid(gA, bottom_row, labels = c("A", ""), ncol = 1, rel_heights = c(2,1))
-
-# 5. Guardar el panel final
-ggsave("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/Figures/Figure_panel_ABC.jpg",
-       plot = final_plot,
-       width = 30,
-       height = 25,
-       units = "cm",
-       dpi = 300)
-```
-
-# ANALISIS BIBLIOMETRICO
-```{r}
-#========
-# DATA
-#========
-M <- convert2df("C:/Users/USUARIO/Desktop/GIT/GrainStorage/files/data/metadatos_unido_curado.csv", dbsource = "scopus", format = "csv")
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # References
 
